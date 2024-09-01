@@ -1198,7 +1198,7 @@ MonoBehaviour:
   maxHealth: 55
   currentHealth: 55
   distancePerHealth: 10
-  jumpDashPenalty: 20
+  jumpDashPenalty: 5
 --- !u!1 &566262280
 GameObject:
   m_ObjectHideFlags: 0
@@ -2813,7 +2813,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ketchupDropletPrefab: {fileID: 6796485677547795895, guid: ac21ed4bb7403614187a71580eecc3e3, type: 3}
   spawnPoint: {fileID: 1962916983}
-  launchForce: 1
+  launchForce: 2
   viscosityFactor: 0.5
   angleRange: 45
 --- !u!4 &1901052438
