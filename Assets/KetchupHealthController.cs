@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KetchupHealthController : MonoBehaviour
 {
@@ -106,5 +107,21 @@ public class KetchupHealthController : MonoBehaviour
         spriteIndex = Mathf.Clamp(spriteIndex, 0, healthSprites.Length - 1);
 
         spriteRenderer.sprite = healthSprites[spriteIndex];
+
+        if (healthPercentage < 0.1f)
+            FindObjectOfType<PlayerController>().Respawn();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        currentHealth = maxHealth;
+        if(collision.CompareTag("Goal"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        Destroy(collision.gameObject);
+        UpdateSprite();
+
+
     }
 }

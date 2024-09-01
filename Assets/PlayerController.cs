@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -66,15 +67,15 @@ public class PlayerController : MonoBehaviour
             if (moveInput != 0)
             {
                 // Accelerate towards max speed
-                currentSpeed = Mathf.MoveTowards(currentSpeed, maxMoveSpeed * moveInput, acceleration * Time.deltaTime);
+                currentSpeed = maxMoveSpeed;// Mathf.MoveTowards(currentSpeed, maxMoveSpeed * moveInput, acceleration * Time.deltaTime);
             }
             else
             {
                 // Decelerate to zero at twice the acceleration rate
-                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, acceleration * 4f * Time.deltaTime);
+                currentSpeed = 0;// Mathf.MoveTowards(currentSpeed, 0, acceleration * 4f * Time.deltaTime);
             }
 
-            rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
+            rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
 
             // Jumping
             if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
@@ -156,20 +157,20 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         // Example respawn logic
-        transform.position = Vector3.zero; // Reset position
-        KetchupHealthController healthController = GetComponent<KetchupHealthController>();
-        if (healthController != null)
-        {
-            healthController.currentHealth = healthController.maxHealth;
-            healthController.UpdateSprite();
-        }
+        SceneManager.LoadScene(1);
+        //KetchupHealthController healthController = GetComponent<KetchupHealthController>();
+        //if (healthController != null)
+        //{
+        //    healthController.currentHealth = healthController.maxHealth;
+        //    healthController.UpdateSprite();
+        //}
 
-        // Enable collection for all droplets
-        KetchupDroplet[] droplets = FindObjectsOfType<KetchupDroplet>();
-        foreach (KetchupDroplet droplet in droplets)
-        {
-            droplet.EnableCollection();
-        }
+        //// Enable collection for all droplets
+        //KetchupDroplet[] droplets = FindObjectsOfType<KetchupDroplet>();
+        //foreach (KetchupDroplet droplet in droplets)
+        //{
+        //    droplet.EnableCollection();
+        //}
     }
 
     // Public getters for the KetchupHealthController
