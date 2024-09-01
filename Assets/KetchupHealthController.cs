@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,9 +34,11 @@ public class KetchupHealthController : MonoBehaviour
         lastPosition = playerController.transform.position;
         UpdateSprite();  // Call UpdateSprite to set the initial sprite based on full health
     }
-
+    bool alive = true;
     void Update()
     {
+        if (!alive)
+            return;
         // Calculate distance traveled since last frame
         distanceTraveled += Vector3.Distance(playerController.transform.position, lastPosition);
         lastPosition = playerController.transform.position;
@@ -108,8 +111,16 @@ public class KetchupHealthController : MonoBehaviour
 
         spriteRenderer.sprite = healthSprites[spriteIndex];
 
-        if (healthPercentage < 0.1f)
-            FindObjectOfType<PlayerController>().Respawn();
+        if (spriteIndex == healthSprites.Length - 1)
+            StartCoroutine(Die());
+            
+    }
+
+    private IEnumerator Die()
+    {
+        yield return new WaitForSeconds(1f);
+        alive = false;
+        FindObjectOfType<PlayerController>().Respawn();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

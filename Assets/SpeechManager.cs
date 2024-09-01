@@ -83,6 +83,10 @@ public class SpeechManager : MonoBehaviour
             curtain.color = color;
             yield return null;
         }
+        if (SceneManager.GetActiveScene().buildIndex != 0)
+            yield break;
+
+        FindObjectOfType<MusicManager>().PlaySad();
         ketchup.gameObject.SetActive(true);
         yield return new WaitForSeconds(1f);
         while (curtain.color.a > 0f)

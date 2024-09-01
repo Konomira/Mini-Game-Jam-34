@@ -1,3 +1,4 @@
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,10 +34,19 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public LayerMask wallLayer;
 
+    AudioSource source;
+    MusicManager manager;
+
     void Start()
     {
+        if(source == null)
+            source = gameObject.AddComponent<AudioSource>();
+
+        source.volume = 0.45f;
+        manager = FindObjectOfType<MusicManager>();
         rb = GetComponent<Rigidbody2D>();
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Droplets"), true);
+
     }
 
     void Update()
@@ -81,6 +91,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                source.PlayOneShot(manager.jump);
             }
 
             // Start dash
@@ -119,6 +130,9 @@ public class PlayerController : MonoBehaviour
             {
                 canDashJump = false;
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                source.pitch = Random.Range(0.95f, 1.05f);
+                source.PlayOneShot(manager.jump);
+
                 dashTime = 0;
             }
         }
@@ -157,7 +171,7 @@ public class PlayerController : MonoBehaviour
     public void Respawn()
     {
         // Example respawn logic
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         //KetchupHealthController healthController = GetComponent<KetchupHealthController>();
         //if (healthController != null)
         //{
