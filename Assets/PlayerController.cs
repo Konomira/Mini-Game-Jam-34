@@ -3,7 +3,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Movement parameters
-    public float moveSpeed = 5f;
+    public float acceleration = 5f;
+    public float maxMoveSpeed = 5f;
+    private float currentSpeed = 0f;
     public float jumpForce = 10f;
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         if (isGrounded)
             canDashJump = false;
+
         // Check if touching a wall
         isTouchingWall = Physics2D.Raycast(transform.position, Vector2.right * transform.localScale.x, wallCheckDistance, wallLayer);
 
@@ -54,13 +57,23 @@ public class PlayerController : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;  // Count down coyote time
         }
 
-
         // Movement input
         float moveInput = Input.GetAxisRaw("Horizontal");
 
         if (!isDashing)
         {
-            rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+            if (moveInput != 0)
+            {
+                // Accelerate towards max speed
+                currentSpeed = Mathf.MoveTowards(currentSpeed, maxMoveSpeed * moveInput, acceleration * Time.deltaTime);
+            }
+            else
+            {
+                // Decelerate to zero at twice the acceleration rate
+                currentSpeed = Mathf.MoveTowards(currentSpeed, 0, acceleration * 4f * Time.deltaTime);
+            }
+
+            rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
 
             // Jumping
             if (Input.GetButtonDown("Jump") && coyoteTimeCounter > 0f)
@@ -98,7 +111,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(canDashJump)
+        if (canDashJump)
         {
             if (Input.GetButtonDown("Jump"))
             {
