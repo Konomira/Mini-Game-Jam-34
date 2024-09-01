@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Droplets"), true);
     }
 
     void Update()
@@ -143,12 +144,57 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("KillPlane"))
-            transform.position = Vector3.zero;
+            Respawn();
 
         // Prevent wall sticking by adjusting velocity
         if (isTouchingWall)
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
+    }
+
+    public void Respawn()
+    {
+        // Example respawn logic
+        transform.position = Vector3.zero; // Reset position
+        KetchupHealthController healthController = GetComponent<KetchupHealthController>();
+        if (healthController != null)
+        {
+            healthController.currentHealth = healthController.maxHealth;
+            healthController.UpdateSprite();
+        }
+
+        // Enable collection for all droplets
+        KetchupDroplet[] droplets = FindObjectsOfType<KetchupDroplet>();
+        foreach (KetchupDroplet droplet in droplets)
+        {
+            droplet.EnableCollection();
+        }
+    }
+
+    // Public getters for the KetchupHealthController
+    public bool IsDashing
+    {
+        get { return isDashing; }
+    }
+
+    public float DashTime
+    {
+        get { return dashTime; }
+    }
+
+    public float DashDuration
+    {
+        get { return dashDuration; }
+    }
+
+    public Rigidbody2D PlayerRigidbody
+    {
+        get { return rb; }
+    }
+
+    public float CurrentSpeed
+    {
+        get { return currentSpeed; }
     }
 }
